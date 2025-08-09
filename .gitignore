@@ -1,0 +1,14 @@
+# Build artifacts
+/bin/
+/build/
+/dist/
+*.exe
+*.out
+*.test
+
+# IDE/editor
+.idea/
+.DS_Store
+
+# Go
+vendor/
