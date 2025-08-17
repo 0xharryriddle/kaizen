@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
-	// Simple CLI: kaizen run [--dev]
+	// Enhanced CLI: kaizen run [--dev] [--l2-mode]
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
 	dev := runCmd.Bool("dev", false, "Run in developer mode with sane defaults")
+	l2Mode := runCmd.Bool("l2-mode", false, "Run as Layer 2 node (default: true)")
 
 	if len(os.Args) < 2 {
 		usage()
@@ -23,7 +24,7 @@ func main() {
 	switch os.Args[1] {
 	case "run":
 		_ = runCmd.Parse(os.Args[2:])
-		run(*dev)
+		run(*dev, *l2Mode)
 	case "help", "--help", "-h":
 		usage()
 	default:
@@ -37,14 +38,18 @@ func usage() {
 	fmt.Println("kaizen <command> [options]")
 	fmt.Println()
 	fmt.Println("Commands:")
-	fmt.Println("  run       Start the node")
+	fmt.Println("  run       Start the Layer 2 node")
 	fmt.Println()
 	fmt.Println("Options for 'run':")
-	fmt.Println("  --dev     Start in developer mode")
+	fmt.Println("  --dev       Start in developer mode")
+	fmt.Println("  --l2-mode   Run as Layer 2 node (default behavior)")
 }
 
-func run(dev bool) {
-	cfg := node.Config{DevMode: dev}
+func run(dev bool, l2Mode bool) {
+	cfg := node.Config{
+		DevMode: dev,
+		L2Mode:  l2Mode || true, // Default to L2 mode
+	}
 	n := node.New(cfg)
 
 	ctx, cancel := context.WithCancel(context.Background())
